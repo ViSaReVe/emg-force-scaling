@@ -41,6 +41,46 @@ until a paired test is run. And 57–113 is an extrapolation 4–7× beyond the 
 
 ---
 
+## 1b. Prior art — checked 19 Aug, and the claim survives
+
+Before writing "nobody has published this," I went and looked.
+
+**Meta, *A generic non-invasive neuromotor interface*, Nature 2025** (Kaifosh, Reardon et al.)
+is the closest prior work and it is close:
+
+> *"Across all tasks, we observed reliable performance improvements as a function of the
+> increasing number of participants in the training corpus. Consistent with other domains,
+> empirical performance follows a power law both as a function of parameters and data quantity."*
+
+- Tasks: **wrist angle velocity, discrete gestures, handwriting.**
+- Participants: 162 (wrist) · 4,900 (gesture) · 6,627 (handwriting); 11,236 unique overall.
+- They handle re-donning by *training across* multiple band placements.
+- **Force estimation is not among their tasks.**
+
+**Scaling and Distilling Transformer Models for sEMG** (arXiv:2507.22094) scales **model
+parameters** — 2.2M → 109M — on emg2qwerty typing. Fixed 100-user training set. **No
+subject-count axis, no force.**
+
+### So the precise claim is
+
+> The power law in participant count is established for sEMG **kinematics and discrete
+> gestures**. This measures it for **force regression** — the modality ForceBand and Hemlock
+> are built on — and finds the same functional form.
+
+Not "nobody has done scaling laws in EMG." That would be wrong and checkable. The contribution
+is the **axis** (force), the **head-to-head against per-user calibration**, and the
+**re-donning cost**, which Meta sidesteps by training across placements rather than measuring
+what it costs.
+
+### One number that makes the extrapolation less wild
+
+Meta's **wrist decoder used 162 participants** — their smallest task, and the one closest to a
+continuous regression problem. Our extrapolation to the same-session ceiling lands at
+**57–113 wearers**, comfortably *below* that. So the target is not exotic; it is smaller than
+what Meta already collected for the nearest comparable decoder.
+
+---
+
 ## 2. What limits it
 
 | Limit | Does it threaten the claim? |
@@ -106,14 +146,17 @@ starts and does not finish.
 
 ## 6. Next steps
 
-| # | Step | Cost |
+| # | Step | State |
 |---|---|---|
-| 1 | Wilcoxon signed-rank on the 20 paired differences; add a paired-dots panel | 1 h |
-| 2 | Calibration-budget sweep (§3) | 1 day |
-| 3 | README rewritten as findings, not scaffolding; results committed | 2 h |
-| 4 | Push public to GitHub | 30 min |
-| 5 | Email to Julian: figure + three sentences + caveats | 1 h |
+| 1 | Wilcoxon signed-rank + paired-dots panel | ✅ done — p = 0.0027, holds without the outlier |
+| 2 | Two-panel figure, CVD-validated palette | ✅ done |
+| 3 | Private GitHub repo + changelog | ✅ done |
+| 4 | Prior-art check | ✅ done — see §1b, claim survives and is now precisely bounded |
+| 5 | **README rewritten as findings, not scaffolding** | next, ~2 h |
+| 6 | **Email to Julian** — figure, three sentences, caveats | next, ~1 h |
+| 7 | Calibration-budget surface (§3) | optional, ~1 day |
+| 8 | Flip repo public when the email goes out | 5 min |
 
-Steps 1, 3, 4, 5 are Path 1. Step 2 decides itself once you see how long step 1 takes.
+**Path 1 is steps 5, 6, 8 — about half a day.** Step 7 is the only real decision left.
 
 **Deadline is 31 Aug. Today is the 19th. This finishes early or it does not finish at all.**

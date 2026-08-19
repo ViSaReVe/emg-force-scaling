@@ -1,0 +1,45 @@
+PAIRED COMPARISONS
+========================================================================
+
+zero-shot on 16 others  vs  own calibration, next day   (n = 20 subjects, paired)
+  zero-shot on 16 others           mean  11.22   median  10.61 %MVC
+  own calibration, next day        mean  15.17   median  11.76 %MVC
+  wins for the first method       : 14/20
+  median paired difference        : +2.71 %MVC
+  Wilcoxon signed-rank            : W = 28.0, p = 0.0027
+  paired t-test                   : p = 0.0712
+  sign test (direction only)      : p = 0.1153
+  rank-biserial effect size       : 0.733
+
+Robustness - dropping the worst cross-day subject
+------------------------------------------------------------------------
+zero-shot on 16 others  vs  own calibration next day (excl. subj 6)   (n = 19 subjects, paired)
+  zero-shot on 16 others           mean  10.41   median   9.49 %MVC
+  own calibration next day (excl. subj 6) mean  12.38   median  11.73 %MVC
+  wins for the first method       : 13/19
+  median paired difference        : +2.69 %MVC
+  Wilcoxon signed-rank            : W = 28.0, p = 0.0053
+  paired t-test                   : p = 0.0065
+  sign test (direction only)      : p = 0.1671
+  rank-biserial effect size       : 0.705
+
+Remaining gap to the ceiling
+------------------------------------------------------------------------
+zero-shot on 16 others  vs  own calibration, same session   (n = 20 subjects, paired)
+  zero-shot on 16 others           mean  11.22   median  10.61 %MVC
+  own calibration, same session    mean   8.44   median   7.57 %MVC
+  wins for the first method       : 0/20
+  median paired difference        : -1.91 %MVC
+  Wilcoxon signed-rank            : W = 0.0, p = 0.0000
+  paired t-test                   : p = 0.0008
+  sign test (direction only)      : p = 0.0000
+  rank-biserial effect size       : 1.000
+
+READING IT
+------------------------------------------------------------------------
+The signed-rank test is significant while the sign test is not: the effect lives in
+the MAGNITUDE of the differences, not merely their direction. 14/20 by itself would
+not be convincing; 14/20 with large wins and small losses is.
+
+Zero-shot does NOT beat same-session calibration - it loses 20/20. That gap is what
+more wearers would have to close, and it is the honest limit of the claim.

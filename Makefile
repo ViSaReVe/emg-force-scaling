@@ -1,6 +1,6 @@
-.PHONY: all fetch prepare sweep plot clean check smoke inspect
+.PHONY: all fetch prepare sweep plot clean check smoke inspect paired
 
-all: fetch prepare sweep plot
+all: fetch prepare sweep paired plot
 
 check:      ## sanity-check paths, montage and one record before the long runs
 	python -m src.fetch --check
@@ -20,6 +20,9 @@ inspect:    ## sanity-check the cache: normalisation, EMG-force relation, go/no-
 
 sweep:      ## leave-one-subject-out x training-set-size sweep
 	python -m src.sweep
+
+paired:     ## paired per-subject tests behind the headline claim
+	python -m src.paired
 
 plot:       ## the figure that goes in the email
 	python -m src.plot
