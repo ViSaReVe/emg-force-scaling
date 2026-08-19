@@ -1,0 +1,13 @@
+# Data: 5 GB of PhysioNet WFDB records. Never committed - fetch.py rebuilds it.
+data/
+
+# Intermediate feature cache (~6 MB but derived; regenerate with `make prepare`)
+results/cache/
+
+# Results ARE committed - they are the deliverable:
+#   results/summary.csv, raw_results.csv, run_config.json, *.png
+
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

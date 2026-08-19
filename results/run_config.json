@@ -1,0 +1,103 @@
+{
+  "data": {
+    "root": "data/hd-semg/2.0.0",
+    "subsets": [
+      "random_dataset",
+      "mvc_dataset"
+    ],
+    "subjects": 20,
+    "sessions": [
+      1,
+      2
+    ],
+    "emg_fs": 2048,
+    "force_fs": 100,
+    "n_force_channels": 5,
+    "force_units": "V",
+    "force_sensor": "SAS/Huatran, +/-200 N range, 0.03 %F.S. precision (equipment_info.pdf)",
+    "emg_amplifier": "OT Bioelettronica Quattrocento, 4 x 8x8 arrays (equipment_info.pdf)",
+    "subset_record_types": {
+      "random_dataset": [
+        "force",
+        "preprocess"
+      ],
+      "mvc_dataset": [
+        "force"
+      ]
+    },
+    "force_units_note": "Force channels are stored as AMPLIFIER VOLTS (see /V in the .hea), with a different gain per finger. equipment_info.pdf gives the sensor range (+/-200 N) but the dataset ships no V->N constant, so absolute Newtons are NOT recoverable. This is why the Hyser literature reports %MVC. We do the same."
+  },
+  "montage": {
+    "n_channels": 8,
+    "channel_names": [
+      "ED-4-2",
+      "ED-4-4",
+      "ED-4-6",
+      "ED-4-8",
+      "FD-4-2",
+      "FD-4-4",
+      "FD-4-6",
+      "FD-4-8"
+    ],
+    "indices": [
+      3,
+      7,
+      67,
+      71,
+      131,
+      135,
+      195,
+      199
+    ],
+    "strategy": "distal_arrays_one_row_4_cols_each",
+    "note": "Row 4 of 8 is a mid-row choice. Confirm array orientation in equipment_info.pdf."
+  },
+  "signal": {
+    "bandpass": [
+      20,
+      450
+    ],
+    "notch_hz": 50,
+    "notch_q": 30,
+    "window_ms": 200,
+    "hop_ms": 100,
+    "features": [
+      "rms",
+      "mav",
+      "wl",
+      "zc",
+      "ssc"
+    ],
+    "note": "'preprocess' records are already filtered by the Hyser authors. The bandpass/notch below is a light safety net, not the primary filter. Switch record_types to ['force','raw'] if you want to own the filtering."
+  },
+  "sweep": {
+    "train_sizes": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "repeats": 10,
+    "held_out_subjects": "all",
+    "model": "ridge",
+    "ridge_alphas": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "bootstrap": 1000,
+    "seed": 20260817
+  },
+  "output": {
+    "results_dir": "results",
+    "figure": "results/scaling_curve.png"
+  },
+  "target": {
+    "units": "pct_mvc",
+    "mvc_percentile": 95,
+    "note": "Per subject, per session, per finger: reference = 95th percentile of |force| across that subject's MVC trials (flexion and extension). y = 100 * force / reference. Comparable to Jiang 2021 (~8.57 %MVC RMSE, within-day, random subset). NOT comparable in level to ForceBand's 0.85 N - only the SHAPE of the scaling curve transfers."
+  }
+}
