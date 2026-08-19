@@ -1,0 +1,31 @@
+{
+  "cal_seconds": [
+    0,
+    5,
+    15,
+    30,
+    60,
+    120
+  ],
+  "lambdas": [
+    1.0,
+    10.0,
+    100.0,
+    1000.0,
+    10000.0,
+    100000.0
+  ],
+  "hop_ms": 100,
+  "min_inner_windows": 30,
+  "seed": 20260817,
+  "repeats": 10,
+  "train_sizes": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "test": "held-out subject session 2, full",
+  "calibration": "held-out subject session 1, first k s (contiguous) or k s of windows evenly spaced (spread)"
+}

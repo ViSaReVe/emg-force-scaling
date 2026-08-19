@@ -1,0 +1,54 @@
+CALIBRATION BUDGET — PAIRED TESTS
+========================================================================
+
+Every cell: train on N other wearers, adapt on k seconds of the held-out
+wearer's session 1, test on all of their session 2 (next day, band re-donned).
+Adaptation = affine; calibration windows = contiguous.
+
+Does 5 s of calibration still pay, at each corpus size?
+------------------------------------------------------------------------
+  N= 1  no calibration  21.98  ->    5 s  13.60   mean gain +8.38 | median 17.36 -> 13.58 | helped 18/20 | p = 0.0002
+  N= 2  no calibration  17.85  ->    5 s  13.43   mean gain +4.41 | median 14.62 -> 12.79 | helped 15/20 | p = 0.0094
+  N= 4  no calibration  15.81  ->    5 s  13.20   mean gain +2.61 | median 12.06 -> 11.91 | helped 10/20 | p = 0.4980
+  N= 8  no calibration  13.52  ->    5 s  12.57   mean gain +0.95 | median 11.17 -> 11.79 | helped 8/20 | p = 0.5459
+  N=16  no calibration  12.40  ->    5 s  12.38   mean gain +0.02 | median 10.59 -> 11.51 | helped 6/20 | p = 0.1231
+
+Does 120 s of calibration still pay, at each corpus size?
+------------------------------------------------------------------------
+  N= 1  no calibration  21.98  ->  120 s  12.67   mean gain +9.31 | median 17.36 -> 11.72 | helped 19/20 | p = 0.0000
+  N= 2  no calibration  17.85  ->  120 s  12.82   mean gain +5.02 | median 14.62 -> 11.28 | helped 18/20 | p = 0.0001
+  N= 4  no calibration  15.81  ->  120 s  12.83   mean gain +2.98 | median 12.06 -> 10.90 | helped 15/20 | p = 0.0083
+  N= 8  no calibration  13.52  ->  120 s  12.30   mean gain +1.22 | median 11.17 -> 10.72 | helped 13/20 | p = 0.1140
+  N=16  no calibration  12.40  ->  120 s  11.93   mean gain +0.47 | median 10.59 -> 10.50 | helped 10/20 | p = 0.8408
+
+The headline comparison, in full
+------------------------------------------------------------------------
+16 wearers + 120 s calibration  vs  16 wearers, no calibration   (n = 20 subjects, paired)
+  16 wearers + 120 s calibration   mean  11.93   median  10.50 %MVC
+  16 wearers, no calibration       mean  12.40   median  10.59 %MVC
+  wins for the first method       : 10/20
+  median paired difference        : +0.10 %MVC
+  Wilcoxon signed-rank            : W = 99.0, p = 0.8408
+  paired t-test                   : p = 0.3603
+  sign test (direction only)      : p = 1.0000
+  rank-biserial effect size       : 0.057
+
+READING IT
+------------------------------------------------------------------------
+The value of the calibration ritual is not a constant — it is a function of how
+much data you already have. On this dataset it falls by more than an order of
+magnitude between 1 wearer and 16, and by 16 it is no longer
+distinguishable from skipping calibration entirely.
+
+Two honest limits.
+  1. None of this reaches the same-session ceiling (8.4 %MVC). Taking the band
+     off costs more than any amount of calibration recovers, at any corpus size
+     tested. The corpus buys out the RITUAL, not the re-donning penalty.
+  2. The means are pulled up by a handful of badly-transferring wearers. At
+     N=16 the mean says calibration is worth +0.5 %MVC while the median wearer
+     is barely touched — so read it as 'calibration has become a fallback for the
+     tail', not as 'calibration has become useless'.
+
+  For reference: 16 wearers, no calibration = 12.40 %MVC on this test set
+  (session 2 only, which is the harder of the two sessions; sweep.py's headline
+  11.22 averages over both sessions).

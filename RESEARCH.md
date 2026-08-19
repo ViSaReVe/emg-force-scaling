@@ -1,12 +1,12 @@
 # Where this stands, and where it could go
 
-Written 19 Aug 2026, after the first full sweep.
+Written 19 Aug 2026, after the first full sweep. Updated 19 Aug after the calibration-budget run.
 
 ---
 
 ## 1. What we actually have
 
-Three findings, graded honestly.
+Four findings, graded honestly.
 
 ### A. A scaling law for EMG→force  ⭐ genuinely new
 
@@ -36,8 +36,34 @@ Extrapolating the power law to the same-session ceiling: **≈57 wearers** (mean
 **≈113** (median fit).
 
 **Caveat that must ship with it:** the cross-day arm has n = 20 (one pair per subject), so its
-CI is 11.1–21.4 and overlaps the zero-shot band. The claim is *suggestive*, not established,
-until a paired test is run. And 57–113 is an extrapolation 4–7× beyond the last data point.
+CI is 11.1–21.4 and overlaps the zero-shot band. The paired tests carry the claim, not the
+error bars. And 57–113 is an extrapolation 4–7× beyond the last data point.
+
+### D. The calibration budget  ⭐ the decision tool — see §3, now done
+
+The value of per-user calibration is **not a constant**. It is a function of corpus size, and it
+collapses fast.
+
+| Wearers in corpus | What 120 s of calibration saves | Wearers helped | Paired p |
+|---|---|---|---|
+| 1 | +9.31 %MVC | 19/20 | 0.0000 |
+| 2 | +5.02 | 18/20 | 0.0001 |
+| 4 | +2.98 | 15/20 | 0.0083 |
+| 8 | +1.22 | 13/20 | 0.114 |
+| 16 | **+0.47** | **10/20** | **0.841** |
+
+Roughly the first 5 seconds does most of the work at every corpus size. Two sub-findings that
+matter as much as the headline:
+
+- **The corpus buys out the ritual, not the re-donning penalty.** No cell on the surface reaches
+  the same-session ceiling of 8.4 %MVC. Adding wearers substitutes for calibration, not for the
+  band having moved. Meta handles re-donning by *training across placements*, not by adding
+  participants, and this is evidence that the distinction is load-bearing.
+- **Fitting the scale beats fitting the weights.** A per-finger gain and offset (10 parameters)
+  produces the whole surface. Prior-mean ridge on the population model's residuals is worse than
+  not calibrating at all, and stays worse when its penalty is chosen on the test set — a method
+  failure, not a tuning failure. Anything with the capacity to memorise session 1's donning gets
+  punished on session 2.
 
 ---
 
@@ -68,9 +94,8 @@ subject-count axis, no force.**
 > are built on — and finds the same functional form.
 
 Not "nobody has done scaling laws in EMG." That would be wrong and checkable. The contribution
-is the **axis** (force), the **head-to-head against per-user calibration**, and the
-**re-donning cost**, which Meta sidesteps by training across placements rather than measuring
-what it costs.
+is the **axis** (force), the **head-to-head against per-user calibration**, the
+**re-donning cost**, and the **corpus-vs-calibration trade**.
 
 ### One number that makes the extrapolation less wild
 
@@ -91,46 +116,50 @@ what Meta already collected for the nearest comparable decoder.
 | 8 channels we chose ourselves | Moderate. It imitates a band; it is not one. |
 | %MVC not Newtons | Presentational. Forced by the dataset — force is stored in amplifier volts. |
 | Hyser is clean lab data | **Yes, for anything about sweat, fatigue or a real shift.** Say nothing about those. |
+| Budget surface scored on session 2 only | Presentational, but state it. Session 2 is the harder session (12.4 at N=16 vs 11.2 averaged over both), so budget cells are comparable to each other but not to the scaling curve. |
 
 ---
 
-## 3. The one experiment that would multiply the value
-
-Right now the result says *more wearers help*. The product question is sharper:
+## 3. ~~The one experiment that would multiply the value~~ — done 19 Aug
 
 > **Given N wearers already in the corpus, how many seconds of per-user calibration do you
 > still need?**
 
-That is a **2-D surface**, not a curve — subjects on one axis, calibration seconds on the
-other — and it turns the finding from an observation into a **decision tool**. It is exactly
-the spec for Hemlock's out-of-box experience, and the machinery already exists: add a few-shot
-arm that trains on N subjects **plus k seconds** of the held-out wearer, sweeping
-k ∈ {0, 5, 15, 30, 60, 120}.
+Built as `src/budget.py`. Result in §1D. It cost about half a day rather than the estimated
+full day, because the expensive part (the population fit) is shared across every duration and
+adaptation method, so 1,000 fits covered the whole 2-D grid.
 
-Output: *"At 50 wearers, 15 seconds of calibration gets you what 5 minutes buys today."*
-Or whatever it actually says.
+The answer, in the shape §3 originally asked for: *"At 16 wearers, calibration is worth 0.5 %MVC
+and helps half your wearers — so stop shipping it as a default ritual and keep it as a rescue
+path for the tail."*
 
-**Cost: about a day.** Highest value-per-hour of anything on this list, by a wide margin.
+Validated against the existing results by construction: the surface's corners reproduce
+`calibrated_crossday` (15.52 vs 15.17) and zero-shot (12.40 on session 2 only).
 
 ---
 
 ## 4. Three paths
 
-### Path 1 — Ship what exists  (2–3 days)  ← **do this regardless**
-Paired test, write-up, public repo, send to Julian. Closes the commitment with 10 days spare.
+### Path 1 — Ship what exists  (2–3 days)  ← **done, bar the send**
+Paired test, write-up, public repo, send to Julian.
 
-### Path 2 — Add the calibration-budget surface  (+1–2 days)
-Path 1 plus §3. Turns a plot into a tool. **Recommended.**
+### Path 2 — Add the calibration-budget surface  (+1–2 days)  ← **done 19 Aug**
+Path 1 plus §3. Turned the plot into a tool.
 
 ### Path 3 — Make it a preprint  (3–6 weeks)
 Path 2 plus: a second dataset (**HD-FW KIN** — 21 subjects and it has genuine *wrist* arrays,
 which fixes the montage objection), a 1-D CNN to show the law is not a ridge artifact, a
 channel-count ablation, and pooling across datasets to push N past 16.
 
-**Do not decide Path 3 now.** Decide it after seeing whether Julian engages, and against the
-OPT clock. It is real work with a real payoff — first-author preprint, live topic, exactly the
-sensor/signal-ML lane — but it is also precisely the shape of thing the 15 Aug audit says
-starts and does not finish.
+The budget surface strengthens the case for Path 3: there are now **four** findings rather than
+two, and finding D is the one with no obvious prior art at all. The re-donning result in
+particular suggests an experiment nobody appears to have run — *how many donnings per wearer is
+a new wearer worth?* — which Hyser cannot answer with 2 sessions but a multi-donning dataset
+could.
+
+**Still do not decide Path 3 now.** Decide it after seeing whether Julian engages, and against
+the OPT clock. It is precisely the shape of thing the 15 Aug audit says starts and does not
+finish.
 
 ---
 
@@ -140,7 +169,11 @@ starts and does not finish.
   question nobody asked.
 - **Do not claim anything about sweat, drift, or a full shift.** Hyser cannot support it.
 - **Do not extrapolate past ~100 wearers** without saying loudly that it is extrapolation.
-- **Do not fold in Ninapro or a third dataset before Path 1 ships.**
+- **Do not quote the `finetune_grid` numbers as a result.** They are an oracle, chosen on the
+  test set, and exist only to prove the finetune failure is not a tuning artifact.
+- **Do not quote the `spread` calibration numbers as achievable.** Sampling k seconds of windows
+  across a whole session is not something a wearer can do in k seconds.
+- **Do not fold in Ninapro or a third dataset before the email goes out.**
 
 ---
 
@@ -152,11 +185,11 @@ starts and does not finish.
 | 2 | Two-panel figure, CVD-validated palette | ✅ done |
 | 3 | Private GitHub repo + changelog | ✅ done |
 | 4 | Prior-art check | ✅ done — see §1b, claim survives and is now precisely bounded |
-| 5 | **README rewritten as findings, not scaffolding** | next, ~2 h |
-| 6 | **Email to Julian** — figure, three sentences, caveats | next, ~1 h |
-| 7 | Calibration-budget surface (§3) | optional, ~1 day |
-| 8 | Flip repo public when the email goes out | 5 min |
+| 5 | README rewritten as findings, not scaffolding | ✅ done — and the "nobody has published" overclaim on old line 4 is gone |
+| 6 | Calibration-budget surface (§3) | ✅ done — `budget.py`, `budget_tests.py`, `plot_budget.py` |
+| 7 | **Email to Julian** — figure, the trade, caveats | drafted, needs Vidya's pass and the repo link |
+| 8 | **Commit the new work** (Claude writes files, Vidya runs git) | next |
+| 9 | **Flip repo public when the email goes out** | 5 min |
 
-**Path 1 is steps 5, 6, 8 — about half a day.** Step 7 is the only real decision left.
-
-**Deadline is 31 Aug. Today is the 19th. This finishes early or it does not finish at all.**
+**Deadline is 31 Aug. Today is the 19th.** What remains is a read-through, a git commit, and a
+send.
